@@ -1,0 +1,3 @@
+# shared/
+# 재사용 가능한 유틸리티, 상수, 타입
+# 예: src/shared/constants/config.ts
