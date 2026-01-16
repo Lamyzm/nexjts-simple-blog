@@ -70,11 +70,33 @@ pnpm install
 생성되는 테이블:
 | 테이블 | 설명 |
 |--------|------|
-| `authors` | 작가 정보 (이름, 인스타그램, 소개) |
+| `authors` | 작가 정보 (이름, 인스타그램, 소개, 아바타) |
 | `posts` | 포스트 (제목, 내용, 작성일) |
-| `post_images` | 포스트 이미지 (URL, 블러 데이터) |
+| `post_images` | 포스트 이미지 (URL, 블러 데이터, 순서) |
 | `comments` | 댓글 (닉네임, 내용) |
-| `site_settings` | 사이트 설정 |
+| `youtube_videos` | YouTube 영상 (video_id, 제목, 순서) |
+| `site_settings` | 사이트 설정 (관리자 키 등) |
+
+### Step 2-1: 관리자 키 설정 (중요!)
+
+schema.sql 실행 시 `site_settings` 테이블에 기본 관리자 키가 생성됩니다.
+
+**⚠️ 반드시 안전한 값으로 변경하세요!**
+
+1. 왼쪽 메뉴에서 **Table Editor** 클릭
+2. `site_settings` 테이블 선택
+3. `admin_key` 행의 `value` 컬럼을 클릭
+4. 기본값 `change_me_to_secure_key`를 **안전한 비밀번호로 변경**
+5. Enter 키를 눌러 저장
+
+또는 SQL Editor에서:
+```sql
+UPDATE site_settings
+SET value = 'your_secure_password_here', updated_at = NOW()
+WHERE key = 'admin_key';
+```
+
+> 💡 이 관리자 키는 `/admin` 페이지 로그인에 사용됩니다.
 
 ### Step 3: Storage 버킷 생성 (이미지 저장용)
 
@@ -147,10 +169,9 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 # Supabase (Step 5에서 복사한 값)
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-
-# 관리자 비밀번호 (원하는 값으로 설정)
-ADMIN_PASSWORD=my-secure-admin-password
 ```
+
+> 💡 관리자 비밀번호는 `.env` 파일이 아닌 **Supabase의 `site_settings` 테이블**에서 관리됩니다. (Step 2-1 참고)
 
 ### Step 7: 개발 서버 실행
 
@@ -262,8 +283,9 @@ Vercel 프로젝트 설정에서 Environment Variables 추가:
 NEXT_PUBLIC_SITE_URL=https://your-domain.vercel.app
 NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJI...
-ADMIN_PASSWORD=your-admin-password
 ```
+
+> 💡 관리자 비밀번호는 Supabase DB에서 관리됩니다.
 
 ### 3. 배포
 
@@ -282,7 +304,7 @@ ADMIN_PASSWORD=your-admin-password
 → Storage 버킷이 `post-images`인지, Public 설정인지 확인
 
 ### 관리자 로그인 안됨
-→ `.env.local`의 `ADMIN_PASSWORD` 확인
+→ Supabase `site_settings` 테이블의 `admin_key` 값 확인 (Step 2-1 참고)
 
 ### 빌드 에러
 ```bash
