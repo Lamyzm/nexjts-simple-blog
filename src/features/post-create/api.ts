@@ -1,7 +1,7 @@
 "use server";
 
-import { getPlaiceholder } from "plaiceholder";
 import { revalidatePath } from "next/cache";
+import { getPlaiceholder } from "plaiceholder";
 
 import type { Post, PostImageInsert, PostInsert } from "@/entities/post";
 

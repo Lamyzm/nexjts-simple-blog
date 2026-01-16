@@ -82,7 +82,9 @@ function SortableItem({ video, onDelete, isPending }: SortableItemProps) {
       </button>
 
       <div className="flex-1">
-        <p className="text-sm" style={{ fontFamily: "monospace" }}>{video.video_id}</p>
+        <p className="text-sm" style={{ fontFamily: "monospace" }}>
+          {video.video_id}
+        </p>
         {video.title && (
           <p className="text-sm text-muted-foreground">{video.title}</p>
         )}

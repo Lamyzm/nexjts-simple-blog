@@ -3,7 +3,7 @@
 import dayjs from "dayjs";
 import { ArrowLeft, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { Comment } from "@/entities/comment";
 import type { PostFull } from "@/entities/post";
@@ -112,6 +112,12 @@ export default function PostModalPage({ params }: Props) {
     setComments(commentData);
   };
 
+  // 스크롤 상태 변경 시 리렌더링 방지
+  const memoizedPostContent = useMemo(
+    () => post && <PostContent post={post} showHeader={false} className="mb-10" />,
+    [post]
+  );
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* 데스크톱: 배경 오버레이 (클릭 시 닫기) */}
@@ -186,17 +192,14 @@ export default function PostModalPage({ params }: Props) {
         </header>
 
         {/* Content */}
-        <div
-          className="p-4 md:p-6 lg:p-8"
-          style={{ contentVisibility: "auto", containIntrinsicSize: "auto 500px" }}
-        >
+        <div className="p-4 md:p-6 lg:p-8">
           {loading ? (
             <div className="space-y-4">
               <Skeleton className="aspect-4/3 w-full" />
             </div>
           ) : post ? (
             <>
-              <PostContent post={post} showHeader={false} className="mb-10" />
+              {memoizedPostContent}
 
               <CommentSection
                 comments={comments}
