@@ -27,7 +27,7 @@ export async function createServerClient() {
                 maxAge: 60 * 60 * 24 * 60, // 60일
               });
             });
-          } catch (error) {
+          } catch {
             // Cookies can't be set in Server Components
           }
         },

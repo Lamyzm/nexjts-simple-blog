@@ -94,7 +94,9 @@ export default function SettingsPage() {
               aria-invalid={!!errors.newKey}
             />
             {errors.newKey && (
-              <p className="text-sm text-destructive">{errors.newKey.message}</p>
+              <p className="text-sm text-destructive">
+                {errors.newKey.message}
+              </p>
             )}
           </div>
 

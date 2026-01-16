@@ -83,7 +83,6 @@ export default async function ArchivePage() {
             ))}
           </div>
         )}
-
       </div>
     </div>
   );

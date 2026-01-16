@@ -12,7 +12,8 @@ export const metadata: Metadata = {
   description: "We walk neary - 각자의 감각을 찾고 탐구하는 사진 아카이브 소개",
   openGraph: {
     title: "Introduce",
-    description: "We walk neary - 각자의 감각을 찾고 탐구하는 사진 아카이브 소개",
+    description:
+      "We walk neary - 각자의 감각을 찾고 탐구하는 사진 아카이브 소개",
     type: "website",
   },
 };

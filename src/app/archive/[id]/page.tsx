@@ -1,5 +1,6 @@
-import { createClient } from "@supabase/supabase-js";
 import type { Metadata } from "next";
+
+import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
 
 import type { Comment } from "@/entities/comment";

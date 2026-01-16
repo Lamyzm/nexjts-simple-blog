@@ -2,12 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import type {
-  Post,
-  PostImage,
-  PostImageInsert,
-  PostInsert,
-} from "@/entities/post";
+import type { Post, PostImageInsert, PostInsert } from "@/entities/post";
 
 import { createServerClient } from "@/lib/supabase/server";
 

@@ -17,11 +17,7 @@ interface PostCardProps {
   className?: string;
 }
 
-export function PostCard({
-  className,
-  post,
-  thumbnail,
-}: PostCardProps) {
+export function PostCard({ className, post, thumbnail }: PostCardProps) {
   // 각 카드마다 4~6초 사이 랜덤 인터벌
   const autoplayInterval = useMemo(
     () => Math.floor(Math.random() * 2000) + 4000,

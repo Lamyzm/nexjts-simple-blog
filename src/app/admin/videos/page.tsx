@@ -272,11 +272,7 @@ export default function VideosPage() {
             <label htmlFor="title" className="text-sm font-medium">
               제목 (선택)
             </label>
-            <Input
-              id="title"
-              placeholder="영상 제목"
-              {...register("title")}
-            />
+            <Input id="title" placeholder="영상 제목" {...register("title")} />
           </div>
 
           <div className="flex gap-2">
