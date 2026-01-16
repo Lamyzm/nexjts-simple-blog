@@ -8,7 +8,7 @@ import type { PostFull } from "@/entities/post";
 
 import { CommentForm } from "@/features/comment-create";
 import { env } from "@/lib/env";
-import { createServerClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/server";
 import { CommentSection } from "@/widgets/CommentSection";
 import { PostDetail } from "@/widgets/PostDetail";
 
@@ -120,7 +120,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PostPage({ params }: Props) {
   const { id } = await params;
-  const supabase = await createServerClient();
+  const supabase = createStaticClient();
 
   const { data: post } = (await supabase
     .from("posts")

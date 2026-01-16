@@ -2,7 +2,7 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { PostImage, PostWithAuthor } from "@/entities/post";
@@ -18,6 +18,7 @@ interface PostCardProps {
 }
 
 export function PostCard({ className, post, thumbnail }: PostCardProps) {
+  const router = useRouter();
   // 각 카드마다 4~6초 사이 랜덤 인터벌
   const autoplayInterval = useMemo(
     () => Math.floor(Math.random() * 2000) + 4000,
@@ -28,6 +29,7 @@ export function PostCard({ className, post, thumbnail }: PostCardProps) {
   const [fixedHeight, setFixedHeight] = useState<number | null>(null);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
+  const controlsRef = useRef<HTMLDivElement>(null);
 
   // Sort images by order_index (memoized to prevent re-renders)
   const sortedImages = useMemo(
@@ -54,27 +56,28 @@ export function PostCard({ className, post, thumbnail }: PostCardProps) {
   // 인터셉팅 라우트 (모달로 열림)
   const href = `/archive/${post.id}`;
 
-  const goToPrevious = useCallback(
-    (e?: React.MouseEvent) => {
-      e?.preventDefault();
-      e?.stopPropagation();
-      setCurrentIndex((prev) =>
-        prev === 0 ? sortedImages.length - 1 : prev - 1
-      );
+  const handleCardClick = useCallback(
+    (e: React.MouseEvent) => {
+      // 컨트롤 영역 클릭 시 네비게이션 방지
+      if (controlsRef.current?.contains(e.target as Node)) {
+        return;
+      }
+      router.push(href, { scroll: false });
     },
-    [sortedImages.length]
+    [router, href]
   );
 
-  const goToNext = useCallback(
-    (e?: React.MouseEvent) => {
-      e?.preventDefault();
-      e?.stopPropagation();
-      setCurrentIndex((prev) =>
-        prev === sortedImages.length - 1 ? 0 : prev + 1
-      );
-    },
-    [sortedImages.length]
-  );
+  const goToPrevious = useCallback(() => {
+    setCurrentIndex((prev) =>
+      prev === 0 ? sortedImages.length - 1 : prev - 1
+    );
+  }, [sortedImages.length]);
+
+  const goToNext = useCallback(() => {
+    setCurrentIndex((prev) =>
+      prev === sortedImages.length - 1 ? 0 : prev + 1
+    );
+  }, [sortedImages.length]);
 
   // 터치 이벤트 핸들러
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -107,11 +110,18 @@ export function PostCard({ className, post, thumbnail }: PostCardProps) {
   };
 
   return (
-    <Link
-      href={href}
-      scroll={false}
+    <div
+      role="link"
+      tabIndex={0}
+      onClick={handleCardClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          router.push(href, { scroll: false });
+        }
+      }}
       className={cn(
-        "group block overflow-hidden transition-all duration-150 hover:opacity-80 active:scale-[0.98] active:opacity-80",
+        "group block overflow-hidden transition-all duration-150 hover:opacity-80 active:scale-[0.98] active:opacity-80 cursor-pointer",
         className
       )}
     >
@@ -182,7 +192,7 @@ export function PostCard({ className, post, thumbnail }: PostCardProps) {
         )}
 
         {hasMultipleImages && (
-          <>
+          <div ref={controlsRef}>
             <Button
               variant="ghost"
               size="icon"
@@ -205,11 +215,7 @@ export function PostCard({ className, post, thumbnail }: PostCardProps) {
               {sortedImages.map((_, index) => (
                 <button
                   key={index}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setCurrentIndex(index);
-                  }}
+                  onClick={() => setCurrentIndex(index)}
                   className={cn(
                     "size-1.5 rounded-full transition-colors",
                     index === currentIndex
@@ -220,7 +226,7 @@ export function PostCard({ className, post, thumbnail }: PostCardProps) {
                 />
               ))}
             </div>
-          </>
+          </div>
         )}
       </div>
       <div className="mt-3">
@@ -232,6 +238,6 @@ export function PostCard({ className, post, thumbnail }: PostCardProps) {
           {dayjs(post.created_at).format("YYYY.MM.DD")}
         </time>
       </div>
-    </Link>
+    </div>
   );
 }

@@ -23,7 +23,12 @@ export function PostContent({
   return (
     <article className={cn("w-full", className)}>
       {showHeader && (
-        <header className={cn("mb-6", compact && "mb-4")}>
+        <header
+          className={cn(
+            "mb-6 pb-6 border-b border-zinc-800",
+            compact && "mb-4 pb-4"
+          )}
+        >
           <h1
             className={cn(
               "font-bold font-mono tracking-wide",
