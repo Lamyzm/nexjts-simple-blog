@@ -17,10 +17,9 @@ import { Toaster } from "@/components/ui/sonner";
 
 import { Providers } from "./providers";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://wewalkneary.com";
-const SITE_NAME = "We walk neary";
-const SITE_DESCRIPTION =
-  "We walk neary - 각자의 감각을 찾고 탐구하는 사진 아카이브";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
+const SITE_NAME = "Your Site Name";
+const SITE_DESCRIPTION = "Your site description here";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -29,10 +28,10 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
-  keywords: ["사진", "아카이브", "포토", "갤러리", "we walk neary", "sandvill"],
-  authors: [{ name: "We walk neary" }],
-  creator: "We walk neary",
-  publisher: "We walk neary",
+  keywords: ["photo", "archive", "gallery"],
+  authors: [{ name: "Your Name" }],
+  creator: "Your Name",
+  publisher: "Your Name",
   formatDetection: {
     email: false,
     address: false,
@@ -121,8 +120,8 @@ export default function RootLayout({
           {/* Footer */}
           <footer className="py-8 text-center border-t border-zinc-800 font-mono italic">
             <div className="flex flex-col items-center gap-2 text-xs text-zinc-500">
-              <p>Since 2026.01.12</p>
-              <p>Contact: jae040507@gmail.com</p>
+              <p>Since 20XX.XX.XX</p>
+              <p>Contact: your@email.com</p>
             </div>
           </footer>
 

@@ -5,7 +5,7 @@ import { createClient } from "@supabase/supabase-js";
 import { env } from "@/lib/env";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://wewalkneary.com";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
 
   // 정적 페이지들
   const staticPages: MetadataRoute.Sitemap = [
