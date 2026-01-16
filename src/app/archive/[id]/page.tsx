@@ -9,6 +9,7 @@ import type { PostFull } from "@/entities/post";
 import { CommentForm } from "@/features/comment-create";
 import { env } from "@/lib/env";
 import { createStaticClient } from "@/lib/supabase/server";
+import { siteConfig } from "@/site.config";
 import { CommentSection } from "@/widgets/CommentSection";
 import { PostDetail } from "@/widgets/PostDetail";
 
@@ -82,7 +83,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     post.content?.slice(0, 160).replace(/\n/g, " ").trim() ||
     `${post.author.name}의 포스트`;
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://wewalkneary.com";
+  const siteUrl = siteConfig.url;
 
   return {
     title: post.title,
@@ -164,7 +165,7 @@ export default async function PostPage({ params }: Props) {
     },
     publisher: {
       "@type": "Organization",
-      name: "We walk neary",
+      name: siteConfig.name,
     },
   };
 

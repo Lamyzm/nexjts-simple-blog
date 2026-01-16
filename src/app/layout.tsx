@@ -14,25 +14,21 @@ const pressStart2P = Press_Start_2P({
 import { Navigation } from "@/components/navigation";
 import { Slogan } from "@/components/slogan";
 import { Toaster } from "@/components/ui/sonner";
+import { siteConfig } from "@/site.config";
 
 import { Providers } from "./providers";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://wewalkneary.com";
-const SITE_NAME = "We walk neary";
-const SITE_DESCRIPTION =
-  "We walk neary - 각자의 감각을 찾고 탐구하는 사진 아카이브";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: new URL(siteConfig.url),
   title: {
-    default: SITE_NAME,
-    template: `%s | ${SITE_NAME}`,
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
   },
-  description: SITE_DESCRIPTION,
-  keywords: ["사진", "아카이브", "포토", "갤러리", "we walk neary", "sandvill"],
-  authors: [{ name: "We walk neary" }],
-  creator: "We walk neary",
-  publisher: "We walk neary",
+  description: siteConfig.description,
+  keywords: [...siteConfig.keywords],
+  authors: [{ name: siteConfig.author.name }],
+  creator: siteConfig.author.name,
+  publisher: siteConfig.author.name,
   formatDetection: {
     email: false,
     address: false,
@@ -40,25 +36,25 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "ko_KR",
-    url: SITE_URL,
-    siteName: SITE_NAME,
-    title: SITE_NAME,
-    description: SITE_DESCRIPTION,
+    locale: siteConfig.locale,
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    title: siteConfig.name,
+    description: siteConfig.description,
     images: [
       {
-        url: "/og-image.png",
+        url: siteConfig.ogImage,
         width: 1200,
         height: 630,
-        alt: SITE_NAME,
+        alt: siteConfig.name,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: SITE_NAME,
-    description: SITE_DESCRIPTION,
-    images: ["/og-image.png"],
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: [siteConfig.ogImage],
   },
   robots: {
     index: true,
@@ -78,7 +74,7 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
   alternates: {
-    canonical: SITE_URL,
+    canonical: siteConfig.url,
   },
 };
 
@@ -121,8 +117,8 @@ export default function RootLayout({
           {/* Footer */}
           <footer className="py-8 text-center border-t border-zinc-800 font-mono italic">
             <div className="flex flex-col items-center gap-2 text-xs text-zinc-500">
-              <p>Since 2026.01.12</p>
-              <p>Contact: jae040507@gmail.com</p>
+              <p>Since {siteConfig.footer.since}</p>
+              <p>Contact: {siteConfig.footer.contact}</p>
             </div>
           </footer>
 
