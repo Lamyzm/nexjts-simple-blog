@@ -22,17 +22,6 @@ interface ImageUploadProps {
   onInsertToContent?: (url: string) => void;
 }
 
-// 파일명 정리 (특수문자 제거)
-const sanitizeFileName = (name: string): string => {
-  const ext = name.split(".").pop() || "png";
-  const baseName = name
-    .replace(/\.[^/.]+$/, "")
-    .replace(/[^a-zA-Z0-9]/g, "_")
-    .replace(/_+/g, "_")
-    .slice(0, 50);
-  return `${baseName}.${ext}`;
-};
-
 export function ImageUpload({
   images,
   onChange,
