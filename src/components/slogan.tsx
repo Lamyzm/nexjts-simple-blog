@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 
 import { Show } from "@/components/ui/show";
 import { useSecretAdmin } from "@/providers/secret-admin-provider";
+import { siteConfig } from "@/site.config";
 
 export function Slogan() {
   const { triggerDrag } = useSecretAdmin();
@@ -20,13 +21,13 @@ export function Slogan() {
           onDragEnd={triggerDrag}
           onMouseUp={() => {
             const selection = window.getSelection();
-            if (selection && selection.toString().includes("We walk neary")) {
+            if (selection && selection.toString().includes(siteConfig.slogan)) {
               triggerDrag();
             }
           }}
           draggable
         >
-          &quot;We walk neary&quot;
+          &quot;{siteConfig.slogan}&quot;
         </p>
       </div>
     </Show>

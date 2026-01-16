@@ -14,24 +14,21 @@ const pressStart2P = Press_Start_2P({
 import { Navigation } from "@/components/navigation";
 import { Slogan } from "@/components/slogan";
 import { Toaster } from "@/components/ui/sonner";
+import { siteConfig } from "@/site.config";
 
 import { Providers } from "./providers";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
-const SITE_NAME = "Your Site Name";
-const SITE_DESCRIPTION = "Your site description here";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: new URL(siteConfig.url),
   title: {
-    default: SITE_NAME,
-    template: `%s | ${SITE_NAME}`,
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
   },
-  description: SITE_DESCRIPTION,
-  keywords: ["photo", "archive", "gallery"],
-  authors: [{ name: "Your Name" }],
-  creator: "Your Name",
-  publisher: "Your Name",
+  description: siteConfig.description,
+  keywords: [...siteConfig.keywords],
+  authors: [{ name: siteConfig.author.name }],
+  creator: siteConfig.author.name,
+  publisher: siteConfig.author.name,
   formatDetection: {
     email: false,
     address: false,
@@ -39,25 +36,25 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "ko_KR",
-    url: SITE_URL,
-    siteName: SITE_NAME,
-    title: SITE_NAME,
-    description: SITE_DESCRIPTION,
+    locale: siteConfig.locale,
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    title: siteConfig.name,
+    description: siteConfig.description,
     images: [
       {
-        url: "/og-image.png",
+        url: siteConfig.ogImage,
         width: 1200,
         height: 630,
-        alt: SITE_NAME,
+        alt: siteConfig.name,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: SITE_NAME,
-    description: SITE_DESCRIPTION,
-    images: ["/og-image.png"],
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: [siteConfig.ogImage],
   },
   robots: {
     index: true,
@@ -77,7 +74,7 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
   alternates: {
-    canonical: SITE_URL,
+    canonical: siteConfig.url,
   },
 };
 
@@ -120,8 +117,8 @@ export default function RootLayout({
           {/* Footer */}
           <footer className="py-8 text-center border-t border-zinc-800 font-mono italic">
             <div className="flex flex-col items-center gap-2 text-xs text-zinc-500">
-              <p>Since 20XX.XX.XX</p>
-              <p>Contact: your@email.com</p>
+              <p>Since {siteConfig.footer.since}</p>
+              <p>Contact: {siteConfig.footer.contact}</p>
             </div>
           </footer>
 

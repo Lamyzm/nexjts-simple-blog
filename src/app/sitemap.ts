@@ -3,9 +3,10 @@ import type { MetadataRoute } from "next";
 import { createClient } from "@supabase/supabase-js";
 
 import { env } from "@/lib/env";
+import { siteConfig } from "@/site.config";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
+  const baseUrl = siteConfig.url;
 
   // 정적 페이지들
   const staticPages: MetadataRoute.Sitemap = [

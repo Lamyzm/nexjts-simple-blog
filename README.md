@@ -182,33 +182,49 @@ http://localhost:3000 접속하여 확인!
 
 ## 사이트 커스터마이징
 
-### 사이트 정보 변경
+모든 사이트 설정은 `src/site.config.ts` 파일 하나에서 관리합니다.
 
-`src/app/layout.tsx`:
+```typescript
+// src/site.config.ts
+export const siteConfig = {
+  // 기본 정보
+  name: "Your Site Name",
+  description: "Your site description here",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://example.com",
 
-```tsx
-const SITE_URL = "https://your-domain.com";
-const SITE_NAME = "Your Site Name";
-const SITE_DESCRIPTION = "Your site description";
+  // 슬로건 (헤더 아래 표시)
+  slogan: "Your Slogan Here",
+
+  // SEO 키워드
+  keywords: ["photo", "archive", "gallery"],
+
+  // 작성자 정보
+  author: {
+    name: "Your Name",
+    email: "your@email.com",
+  },
+
+  // Footer
+  footer: {
+    since: "20XX.XX.XX",
+    contact: "your@email.com",
+  },
+
+  // 소셜 링크 (선택)
+  social: {
+    instagram: "",
+    twitter: "",
+  },
+};
 ```
 
-### Footer 변경
-
-같은 파일 하단:
-
-```tsx
-<footer>
-  <p>Since 20XX.XX.XX</p>
-  <p>Contact: your@email.com</p>
-</footer>
-```
-
-### 메타데이터/키워드 변경
-
-```tsx
-keywords: ["your", "keywords", "here"],
-authors: [{ name: "Your Name" }],
-```
+**수정할 항목:**
+- `name` - 사이트 이름 (브라우저 탭, SEO)
+- `description` - 사이트 설명 (SEO)
+- `slogan` - 헤더 아래 표시되는 슬로건
+- `keywords` - SEO 키워드
+- `author` - 작성자 정보
+- `footer` - 하단 Since 날짜, 연락처
 
 ---
 
