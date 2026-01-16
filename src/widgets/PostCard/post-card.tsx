@@ -51,30 +51,6 @@ export function PostCard({ className, post, thumbnail }: PostCardProps) {
     return () => clearInterval(interval);
   }, [hasMultipleImages, isPaused, sortedImages.length, autoplayInterval]);
 
-  // 모바일 터치 피드백 (스크롤 시 취소)
-  const [isPressed, setIsPressed] = useState(false);
-  const pressStartY = useRef<number | null>(null);
-  const SCROLL_THRESHOLD = 10; // 이 이상 움직이면 스크롤로 판단
-
-  const handlePressStart = (e: React.TouchEvent) => {
-    pressStartY.current = e.touches[0].clientY;
-    setIsPressed(true);
-  };
-
-  const handlePressMove = (e: React.TouchEvent) => {
-    if (pressStartY.current === null) return;
-    const moveY = Math.abs(e.touches[0].clientY - pressStartY.current);
-    if (moveY > SCROLL_THRESHOLD) {
-      setIsPressed(false);
-      pressStartY.current = null;
-    }
-  };
-
-  const handlePressEnd = () => {
-    setIsPressed(false);
-    pressStartY.current = null;
-  };
-
   // 인터셉팅 라우트 (모달로 열림)
   const href = `/archive/${post.id}`;
 
@@ -135,14 +111,9 @@ export function PostCard({ className, post, thumbnail }: PostCardProps) {
       href={href}
       scroll={false}
       className={cn(
-        "group block overflow-hidden transition-all duration-150 hover:opacity-80 active:scale-[0.98]",
-        isPressed && "scale-[0.98] opacity-80",
+        "group block overflow-hidden transition-all duration-150 hover:opacity-80 active:scale-[0.98] active:opacity-80",
         className
       )}
-      onTouchStart={handlePressStart}
-      onTouchMove={handlePressMove}
-      onTouchEnd={handlePressEnd}
-      onTouchCancel={handlePressEnd}
     >
       <div
         className="relative overflow-hidden bg-zinc-900"
