@@ -1,6 +1,7 @@
 "use client";
 
 import { LogOut } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     <div className="min-h-screen bg-muted/30">
       <header className="border-b border-border bg-background">
         <div className="container mx-auto flex h-14 items-center justify-between px-4">
-          <h1 className="font-semibold">Admin Dashboard</h1>
+          <Link href="/admin" className="font-semibold hover:opacity-80 transition-opacity">
+            Admin Dashboard
+          </Link>
           <Button
             variant="ghost"
             size="sm"

@@ -51,7 +51,11 @@ export function AuthorSection({
   return (
     <section>
       <Accordion className="mb-6">
-        <AccordionItem id={`author-${author.id}`} value={author.id} className="border-zinc-800">
+        <AccordionItem
+          id={`author-${author.id}`}
+          value={author.id}
+          className="border-zinc-800"
+        >
           <AccordionTrigger className="hover:no-underline py-3">
             <div className="flex items-center gap-3">
               {avatarUrl ? (

@@ -124,3 +124,13 @@ body {
 html {
   scrollbar-color: #404040 transparent;
 }
+
+/* YouTube Embed (lite-youtube) 전체 너비 수정 */
+lite-youtube {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+lite-youtube > iframe {
+  width: 100% !important;
+}

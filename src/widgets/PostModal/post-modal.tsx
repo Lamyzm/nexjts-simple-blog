@@ -32,7 +32,7 @@ export function PostModal() {
   // 모달 내부 스크롤 감지
   const handleScroll = useCallback(() => {
     if (modalRef.current) {
-      setScrolled(modalRef.current.scrollTop > 5);
+      setScrolled(modalRef.current.scrollTop > 50);
     }
   }, []);
 
@@ -179,11 +179,7 @@ export function PostModal() {
             </div>
           ) : post ? (
             <>
-              <PostContent
-                post={post}
-                showHeader={false}
-                className="mb-10"
-              />
+              <PostContent post={post} showHeader={false} className="mb-10" />
 
               <CommentSection
                 comments={comments}
