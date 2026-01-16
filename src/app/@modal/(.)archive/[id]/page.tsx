@@ -1,8 +1,9 @@
 "use client";
 
+import dayjs from "dayjs";
 import { ArrowLeft, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { Comment } from "@/entities/comment";
 import type { PostFull } from "@/entities/post";
@@ -36,27 +37,33 @@ export default function PostModalPage({ params }: Props) {
     params.then((p) => setPostId(p.id));
   }, [params]);
 
-  // 모달 내부 스크롤 감지 (히스테리시스 적용으로 떨림 방지)
-  const handleScroll = useCallback(() => {
-    if (modalRef.current) {
-      const scrollTop = modalRef.current.scrollTop;
-      // 스크롤 다운: 60px 이상이면 축소
-      // 스크롤 업: 30px 이하면 확대
-      // 30~60px 사이는 현재 상태 유지 (버퍼 존)
-      setScrolled((prev) => {
-        if (!prev && scrollTop > 60) return true;
-        if (prev && scrollTop < 30) return false;
-        return prev;
-      });
-    }
-  }, []);
-
   // 모달 열릴 때 body 스크롤 방지
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "";
     };
+  }, []);
+
+  // 스크롤 감지 (헤더 애니메이션용) - hysteresis로 떨림 방지
+  useEffect(() => {
+    const modal = modalRef.current;
+    if (!modal) return;
+
+    const SCROLL_DOWN_THRESHOLD = 40; // scrolled 되는 지점
+    const SCROLL_UP_THRESHOLD = 10; // scrolled 해제되는 지점
+
+    const handleScroll = () => {
+      const currentScroll = modal.scrollTop;
+      setScrolled((prev) => {
+        if (prev && currentScroll < SCROLL_UP_THRESHOLD) return false;
+        if (!prev && currentScroll > SCROLL_DOWN_THRESHOLD) return true;
+        return prev;
+      });
+    };
+
+    modal.addEventListener("scroll", handleScroll, { passive: true });
+    return () => modal.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
@@ -115,14 +122,17 @@ export default function PostModalPage({ params }: Props) {
 
       <div
         ref={modalRef}
-        onScroll={handleScroll}
-        className="relative z-10 h-full w-full overflow-y-auto bg-zinc-950 md:h-auto md:max-h-[90vh] md:max-w-4xl"
+        className="relative z-10 h-full w-full bg-zinc-950 md:h-auto md:max-h-[90vh] md:max-w-4xl overflow-y-auto overflow-x-hidden overscroll-contain"
+        style={{ contain: "layout style" }}
       >
-        {/* Sticky Header */}
-        <div
+        {/* Header */}
+        <header
           className={cn(
-            "sticky top-0 z-20 bg-zinc-950/95 backdrop-blur-sm border-b border-zinc-800 flex items-center",
-            scrolled ? "px-4 py-3 md:px-6" : "px-4 py-4 md:px-6 md:py-6"
+            "sticky top-0 z-20 flex items-center justify-between",
+            "px-4 md:px-6 transition-all duration-200 ease-out",
+            scrolled
+              ? "py-3 md:py-4 bg-zinc-900/95 backdrop-blur-sm border-b border-zinc-700 shadow-lg"
+              : "py-4 md:py-5 bg-zinc-950 border-b border-zinc-800"
           )}
         >
           {/* 모바일: 뒤로가기 버튼 */}
@@ -130,36 +140,38 @@ export default function PostModalPage({ params }: Props) {
             variant="ghost"
             size="icon"
             onClick={handleClose}
-            className="shrink-0 text-zinc-400 hover:text-foreground md:hidden mr-2"
+            className="shrink-0 text-zinc-400 hover:text-foreground md:hidden"
           >
             <ArrowLeft className="size-5" />
           </Button>
 
-          {loading ? (
-            <Skeleton className="h-6 w-1/3" />
-          ) : post ? (
-            <div className="min-w-0 flex-1 pr-4">
-              <h1
-                className={cn(
-                  "font-bold font-mono tracking-wide truncate",
-                  scrolled ? "text-base" : "text-lg md:text-xl"
-                )}
-              >
-                {post.title}
-              </h1>
-              <p
-                className={cn(
-                  "font-mono text-zinc-400",
-                  scrolled ? "text-xs" : "text-xs md:text-sm mt-1"
-                )}
-              >
-                {post.author.name} ·{" "}
-                {new Date(post.created_at).toLocaleDateString("ko-KR")}
-              </p>
-            </div>
-          ) : (
-            <div className="flex-1" />
-          )}
+          <div className="min-w-0 flex-1 mx-2">
+            {loading ? (
+              <Skeleton className="h-6 w-2/3" />
+            ) : post ? (
+              <>
+                <h1
+                  className={cn(
+                    "font-bold font-mono tracking-wide truncate transition-all duration-200",
+                    scrolled ? "text-sm md:text-sm" : "text-lg md:text-xl"
+                  )}
+                >
+                  {post.title}
+                </h1>
+                <p
+                  className={cn(
+                    "font-mono text-zinc-400 transition-all duration-200",
+                    scrolled ? "text-[9px] mt-0 opacity-70" : "text-xs mt-1"
+                  )}
+                >
+                  {post.author.name} ·{" "}
+                  <time dateTime={post.created_at}>
+                    {dayjs(post.created_at).format("YYYY.MM.DD")}
+                  </time>
+                </p>
+              </>
+            ) : null}
+          </div>
 
           {/* 데스크톱: X 버튼 */}
           <Button
@@ -170,7 +182,7 @@ export default function PostModalPage({ params }: Props) {
           >
             <X className="size-5" />
           </Button>
-        </div>
+        </header>
 
         {/* Content */}
         <div className="p-4 md:p-6 lg:p-8">

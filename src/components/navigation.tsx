@@ -54,7 +54,7 @@ export function Navigation() {
         >
           <Camera className="size-6" />
         </Link>
-        <nav className="flex gap-6 text-sm font-sans font-medium text-zinc-400">
+        <nav className="flex gap-6 text-sm font-sans font-bold  text-zinc-400">
           {links.map((link) => (
             <Link
               key={link.href}

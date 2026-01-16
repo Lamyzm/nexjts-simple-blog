@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS post_images (
   post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
   url TEXT NOT NULL,
   storage_path TEXT NOT NULL,
+  blur_data_url TEXT,
   order_index INTEGER DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );

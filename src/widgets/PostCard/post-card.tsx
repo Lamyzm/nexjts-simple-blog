@@ -29,9 +29,11 @@ export function PostCard({ className, post, thumbnail }: PostCardProps) {
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
-  // Sort images by order_index
-  const sortedImages = [...(post.images ?? [])].sort(
-    (a, b) => a.order_index - b.order_index
+  // Sort images by order_index (memoized to prevent re-renders)
+  const sortedImages = useMemo(
+    () =>
+      [...(post.images ?? [])].sort((a, b) => a.order_index - b.order_index),
+    [post.images]
   );
 
   const hasMultipleImages = sortedImages.length > 1;
@@ -150,6 +152,8 @@ export function PostCard({ className, post, thumbnail }: PostCardProps) {
                   height={600}
                   className="w-full h-auto max-h-[400px] object-contain"
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  placeholder={image.blur_data_url ? "blur" : "empty"}
+                  blurDataURL={image.blur_data_url || undefined}
                   onLoad={(e) => {
                     // 첫 번째 이미지 로드 시 높이 고정
                     if (index === 0 && !fixedHeight) {
@@ -227,10 +231,10 @@ export function PostCard({ className, post, thumbnail }: PostCardProps) {
         )}
       </div>
       <div className="mt-3">
-        <h3 className="truncate font-mono text-sm">{post.title}</h3>
+        <h3 className="truncate font-sans font-bold text-sm">{post.title}</h3>
         <time
           dateTime={post.created_at}
-          className="mt-1 block text-xs font-mono text-zinc-500"
+          className="mt-1 block text-[10px] font-mono text-zinc-500"
         >
           {dayjs(post.created_at).format("YYYY.MM.DD")}
         </time>

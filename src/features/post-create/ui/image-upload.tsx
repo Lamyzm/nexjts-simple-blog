@@ -5,12 +5,14 @@ import Image from "next/image";
 import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
 
-import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
+
+import { uploadImage } from "../api";
 
 interface UploadedImage {
   url: string;
   storage_path: string;
+  blur_data_url?: string | null;
   order_index: number;
 }
 
@@ -40,7 +42,6 @@ export function ImageUpload({
   const [isDragging, setIsDragging] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const supabase = createClient();
 
   const uploadFiles = useCallback(
     async (files: FileList | File[]) => {
@@ -56,26 +57,20 @@ export function ImageUpload({
 
       try {
         const uploadPromises = fileArray.map(async (file, idx) => {
-          const sanitizedName = sanitizeFileName(file.name);
-          const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}-${sanitizedName}`;
-          const filePath = `posts/${fileName}`;
+          const formData = new FormData();
+          formData.append("file", file);
 
-          const { error } = await supabase.storage
-            .from("post-images")
-            .upload(filePath, file);
+          const result = await uploadImage(formData);
 
-          if (error) {
-            throw new Error(error.message);
+          if (result.error || !result.data) {
+            throw new Error(result.error || "Upload failed");
           }
-
-          const { data: urlData } = supabase.storage
-            .from("post-images")
-            .getPublicUrl(filePath);
 
           return {
             order_index: images.length + idx,
-            storage_path: filePath,
-            url: urlData.publicUrl,
+            storage_path: result.data.storage_path,
+            url: result.data.url,
+            blur_data_url: result.data.blur_data_url,
           };
         });
 
@@ -92,7 +87,7 @@ export function ImageUpload({
         }
       }
     },
-    [images, onChange, supabase.storage]
+    [images, onChange]
   );
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {

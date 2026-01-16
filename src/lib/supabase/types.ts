@@ -63,6 +63,7 @@ export interface Database {
           post_id: string;
           url: string;
           storage_path: string;
+          blur_data_url: string | null;
           order_index: number;
           created_at: string;
         };
@@ -71,6 +72,7 @@ export interface Database {
           post_id: string;
           url: string;
           storage_path: string;
+          blur_data_url?: string | null;
           order_index?: number;
           created_at?: string;
         };
@@ -79,6 +81,7 @@ export interface Database {
           post_id?: string;
           url?: string;
           storage_path?: string;
+          blur_data_url?: string | null;
           order_index?: number;
           created_at?: string;
         };

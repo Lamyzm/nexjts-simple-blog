@@ -1,6 +1,15 @@
 import type { Metadata, Viewport } from "next";
 
+import { Press_Start_2P } from "next/font/google";
+
 import "./globals.css";
+
+const pressStart2P = Press_Start_2P({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-press-start",
+  display: "swap",
+});
 
 import { Navigation } from "@/components/navigation";
 import { Slogan } from "@/components/slogan";
@@ -91,7 +100,7 @@ export default function RootLayout({
   modal: React.ReactNode;
 }) {
   return (
-    <html lang="ko" suppressHydrationWarning>
+    <html lang="ko" suppressHydrationWarning className={pressStart2P.variable}>
       <head>
         <link
           rel="stylesheet"
@@ -110,8 +119,8 @@ export default function RootLayout({
           {modal}
 
           {/* Footer */}
-          <footer className="py-8 text-center border-t border-zinc-800">
-            <div className="flex flex-col items-center gap-2 text-sm font-mono text-zinc-500">
+          <footer className="py-8 text-center border-t border-zinc-800 font-mono italic">
+            <div className="flex flex-col items-center gap-2 text-xs text-zinc-500">
               <p>Since 2026.01.12</p>
               <p>Contact: jae040507@gmail.com</p>
             </div>

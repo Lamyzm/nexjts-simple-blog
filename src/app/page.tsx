@@ -36,7 +36,7 @@ export default async function HomePage() {
         <section className="mb-12">
           <div className="mx-auto space-y-8 gap-6 grid grid-cols-[repeat(auto-fit,minmax(420px,1fr))]">
             {(videos ?? []).length === 0 ? (
-              <p className="py-20 text-center text-muted-foreground font-mono">
+              <p className="py-20 text-center text-muted-foreground font-sans">
                 등록된 영상이 없습니다.
               </p>
             ) : (
@@ -49,7 +49,7 @@ export default async function HomePage() {
                     />
                   </div>
                   {video.title && (
-                    <p className="mt-3 text-sm font-mono text-zinc-400 text-start">
+                    <p className="mt-3 text-sm font-sans text-zinc-400 text-start">
                       {video.title}
                     </p>
                   )}

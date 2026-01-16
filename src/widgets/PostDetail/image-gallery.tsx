@@ -105,6 +105,8 @@ export function ImageGallery({ className, images }: ImageGalleryProps) {
           height={900}
           className="w-full h-auto max-h-[70vh] object-contain"
           sizes="(max-width: 768px) 100vw, 80vw"
+          placeholder={images[currentIndex].blur_data_url ? "blur" : "empty"}
+          blurDataURL={images[currentIndex].blur_data_url || undefined}
           priority
         />
 

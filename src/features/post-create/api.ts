@@ -1,5 +1,6 @@
 "use server";
 
+import { getPlaiceholder } from "plaiceholder";
 import { revalidatePath } from "next/cache";
 
 import type { Post, PostImageInsert, PostInsert } from "@/entities/post";
@@ -8,7 +9,12 @@ import { createServerClient } from "@/lib/supabase/server";
 
 interface CreatePostData {
   post: PostInsert;
-  images: Array<{ url: string; storage_path: string; order_index: number }>;
+  images: Array<{
+    url: string;
+    storage_path: string;
+    blur_data_url?: string | null;
+    order_index: number;
+  }>;
 }
 
 export async function createPost(data: CreatePostData) {
@@ -32,6 +38,7 @@ export async function createPost(data: CreatePostData) {
       post_id: post.id,
       storage_path: img.storage_path,
       url: img.url,
+      blur_data_url: img.blur_data_url,
     }));
 
     const { error: imageError } = (await supabase
@@ -52,7 +59,12 @@ export async function createPost(data: CreatePostData) {
 export async function updatePost(
   postId: string,
   data: Partial<PostInsert>,
-  images?: Array<{ url: string; storage_path: string; order_index: number }>
+  images?: Array<{
+    url: string;
+    storage_path: string;
+    blur_data_url?: string | null;
+    order_index: number;
+  }>
 ) {
   const supabase = await createServerClient();
 
@@ -75,6 +87,7 @@ export async function updatePost(
         post_id: postId,
         storage_path: img.storage_path,
         url: img.url,
+        blur_data_url: img.blur_data_url,
       }));
 
       const { error: imageError } = (await supabase
@@ -132,6 +145,17 @@ export async function uploadImage(formData: FormData) {
   const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
   const filePath = `posts/${fileName}`;
 
+  // blur hash 생성
+  let blurDataUrl: string | null = null;
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const { base64 } = await getPlaiceholder(buffer, { size: 10 });
+    blurDataUrl = base64;
+  } catch (e) {
+    console.error("Failed to generate blur hash:", e);
+  }
+
   const { error } = await supabase.storage
     .from("post-images")
     .upload(filePath, file);
@@ -148,6 +172,7 @@ export async function uploadImage(formData: FormData) {
     data: {
       storage_path: filePath,
       url: urlData.publicUrl,
+      blur_data_url: blurDataUrl,
     },
   };
 }

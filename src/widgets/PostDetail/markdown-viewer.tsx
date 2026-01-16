@@ -44,9 +44,14 @@ export function MarkdownViewer({ className, content }: MarkdownViewerProps) {
               </code>
             );
           },
-          // 이미지 스타일링
+          // 이미지 스타일링 (layout shift 방지)
           img: ({ ...props }) => (
-            <img {...props} className="rounded-lg max-w-full h-auto" />
+            <img
+              {...props}
+              className="rounded-lg max-w-full h-auto"
+              loading="lazy"
+              decoding="async"
+            />
           ),
         }}
       >

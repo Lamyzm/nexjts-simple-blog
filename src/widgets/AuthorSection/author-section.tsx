@@ -73,7 +73,7 @@ export function AuthorSection({
                   </span>
                 </div>
               )}
-              <h2 className="text-lg font-bold font-mono tracking-wide">
+              <h2 className="text-xs font-bold font-mono tracking-wide">
                 {author.name}
               </h2>
             </div>
@@ -95,7 +95,7 @@ export function AuthorSection({
                     href={instagramUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-sm font-mono text-zinc-400 hover:text-white transition-colors"
+                    className="inline-flex items-center gap-1.5 text-[10px] font-mono text-zinc-400 hover:text-white transition-colors"
                   >
                     <Instagram className="size-4" />
                     {instagramHandle}
