@@ -23,6 +23,8 @@ Next.js 16+ 기반 사진 아카이브/블로그 템플릿입니다.
 - **Backend:** Supabase (PostgreSQL, Storage)
 - **State:** TanStack Query v5, Zustand
 
+---
+
 ## Getting Started
 
 ### 1. 레포지토리 클론
@@ -42,13 +44,95 @@ bun install
 pnpm install
 ```
 
-### 3. Supabase 프로젝트 생성
+---
 
-1. [Supabase](https://supabase.com)에서 새 프로젝트 생성
-2. SQL Editor에서 `supabase/schema.sql` 실행
-3. Storage에서 `post-images` 버킷 생성 (Public)
+## Supabase 설정 (상세 가이드)
 
-### 4. 환경 변수 설정
+### Step 1: Supabase 프로젝트 생성
+
+1. [https://supabase.com](https://supabase.com) 접속
+2. **Start your project** 클릭 → GitHub 계정으로 로그인
+3. **New project** 클릭
+4. 프로젝트 정보 입력:
+   - **Name:** `my-archive` (원하는 이름)
+   - **Database Password:** 안전한 비밀번호 입력 (저장해두세요)
+   - **Region:** `Northeast Asia (Seoul)` 권장
+5. **Create new project** 클릭 → 2-3분 대기
+
+### Step 2: 데이터베이스 테이블 생성
+
+1. 왼쪽 메뉴에서 **SQL Editor** 클릭
+2. **New query** 클릭
+3. `supabase/schema.sql` 파일 내용을 복사하여 붙여넣기
+4. **Run** 버튼 클릭 (또는 Ctrl+Enter)
+5. "Success. No rows returned" 메시지 확인
+
+생성되는 테이블:
+| 테이블 | 설명 |
+|--------|------|
+| `authors` | 작가 정보 (이름, 인스타그램, 소개) |
+| `posts` | 포스트 (제목, 내용, 작성일) |
+| `post_images` | 포스트 이미지 (URL, 블러 데이터) |
+| `comments` | 댓글 (닉네임, 내용) |
+| `site_settings` | 사이트 설정 |
+
+### Step 3: Storage 버킷 생성 (이미지 저장용)
+
+1. 왼쪽 메뉴에서 **Storage** 클릭
+2. **New bucket** 클릭
+3. 버킷 설정:
+   - **Name:** `post-images` (정확히 이 이름으로)
+   - **Public bucket:** ✅ 체크 (중요!)
+4. **Create bucket** 클릭
+
+### Step 4: Storage 정책 설정
+
+1. 생성된 `post-images` 버킷 클릭
+2. 상단 **Policies** 탭 클릭
+3. **New policy** 클릭
+4. **For full customization** 선택
+
+**읽기 정책 (SELECT):**
+```sql
+-- Policy name: Public Read
+-- Allowed operation: SELECT
+-- Target roles: (비워두기 = 모든 사용자)
+-- USING expression:
+true
+```
+
+**업로드 정책 (INSERT):**
+```sql
+-- Policy name: Auth Upload
+-- Allowed operation: INSERT
+-- Target roles: (비워두기)
+-- WITH CHECK expression:
+true
+```
+
+**삭제 정책 (DELETE):**
+```sql
+-- Policy name: Auth Delete
+-- Allowed operation: DELETE
+-- Target roles: (비워두기)
+-- USING expression:
+true
+```
+
+> 💡 간단하게 하려면: **Get started quickly** → **Allow access to all users** 선택
+
+### Step 5: API 키 확인
+
+1. 왼쪽 메뉴에서 **Project Settings** (톱니바퀴 아이콘) 클릭
+2. **API** 메뉴 클릭
+3. 다음 값들을 복사:
+
+| 항목 | 위치 | 용도 |
+|------|------|------|
+| **Project URL** | `https://xxxxx.supabase.co` | `NEXT_PUBLIC_SUPABASE_URL` |
+| **anon public** | `eyJhbGciOiJI...` (긴 문자열) | `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
+
+### Step 6: 환경 변수 설정
 
 ```bash
 cp .env.example .env.local
@@ -57,30 +141,76 @@ cp .env.example .env.local
 `.env.local` 파일 수정:
 
 ```env
-NEXT_PUBLIC_SITE_URL=https://your-domain.com
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-ADMIN_PASSWORD=your-admin-password
+# 사이트 URL (배포 전에는 localhost)
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+
+# Supabase (Step 5에서 복사한 값)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# 관리자 비밀번호 (원하는 값으로 설정)
+ADMIN_PASSWORD=my-secure-admin-password
 ```
 
-### 5. 개발 서버 실행
+### Step 7: 개발 서버 실행
 
 ```bash
 bun dev
-# http://localhost:3000
 ```
 
-### 6. 사이트 커스터마이징
+http://localhost:3000 접속하여 확인!
 
-`src/app/layout.tsx`에서 수정:
+---
+
+## 초기 데이터 설정
+
+### 작가 추가
+
+1. `/admin` 접속 → 비밀번호 입력
+2. **Authors** 메뉴 → **새 작가 추가**
+3. 이름, 인스타그램(선택), 소개(선택) 입력
+
+### 첫 포스트 작성
+
+1. `/admin` → **Posts** → **새 포스트**
+2. 작가 선택, 제목 입력
+3. 이미지 업로드 (드래그 앤 드롭)
+4. 내용 작성 (마크다운 지원)
+5. **저장**
+
+---
+
+## 사이트 커스터마이징
+
+### 사이트 정보 변경
+
+`src/app/layout.tsx`:
 
 ```tsx
 const SITE_URL = "https://your-domain.com";
 const SITE_NAME = "Your Site Name";
-const SITE_DESCRIPTION = "Your description";
+const SITE_DESCRIPTION = "Your site description";
 ```
 
-Footer 연락처도 같은 파일에서 수정.
+### Footer 변경
+
+같은 파일 하단:
+
+```tsx
+<footer>
+  <p>Since 20XX.XX.XX</p>
+  <p>Contact: your@email.com</p>
+</footer>
+```
+
+### 메타데이터/키워드 변경
+
+```tsx
+keywords: ["your", "keywords", "here"],
+authors: [{ name: "Your Name" }],
+```
+
+---
 
 ## Project Structure
 
@@ -90,7 +220,7 @@ src/
 │   ├── @modal/          # 인터셉팅 라우트 (모달)
 │   ├── admin/           # 관리자 페이지
 │   ├── archive/         # 아카이브 페이지
-│   └── layout.tsx       # 루트 레이아웃
+│   └── layout.tsx       # 루트 레이아웃 + 메타데이터
 ├── components/ui/       # shadcn/ui 컴포넌트
 ├── entities/            # 데이터 모델 (Post, Author, Comment)
 ├── features/            # 기능 (post-create, comment-create)
@@ -98,27 +228,53 @@ src/
 └── widgets/             # 복합 UI (PostCard, PostDetail)
 ```
 
-## Database Schema
+---
 
-주요 테이블:
+## Deployment (Vercel)
 
-- `authors` - 작가 정보
-- `posts` - 포스트
-- `post_images` - 포스트 이미지 (blur_data_url 포함)
-- `comments` - 댓글
-- `videos` - YouTube 영상
-- `site_settings` - 사이트 설정
+### 1. Vercel 연결
 
-자세한 스키마는 `supabase/schema.sql` 참조.
+1. [https://vercel.com](https://vercel.com) 접속 → GitHub 로그인
+2. **Add New Project** → 레포지토리 선택
+3. **Import**
 
-## Admin
+### 2. 환경 변수 설정
 
-`/admin`으로 접속하여 관리자 로그인.
+Vercel 프로젝트 설정에서 Environment Variables 추가:
 
-- 포스트 작성/수정/삭제
-- 작가 관리
-- YouTube 영상 관리
-- 사이트 설정
+```
+NEXT_PUBLIC_SITE_URL=https://your-domain.vercel.app
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJI...
+ADMIN_PASSWORD=your-admin-password
+```
+
+### 3. 배포
+
+**Deploy** 클릭 → 자동 배포 완료!
+
+> 커스텀 도메인 연결: Settings → Domains에서 설정
+
+---
+
+## Troubleshooting
+
+### "테이블을 찾을 수 없습니다" 에러
+→ SQL Editor에서 `schema.sql` 실행했는지 확인
+
+### 이미지 업로드 실패
+→ Storage 버킷이 `post-images`인지, Public 설정인지 확인
+
+### 관리자 로그인 안됨
+→ `.env.local`의 `ADMIN_PASSWORD` 확인
+
+### 빌드 에러
+```bash
+bun run build
+```
+에러 메시지 확인 후 해결
+
+---
 
 ## Scripts
 
@@ -130,13 +286,7 @@ bun lint          # ESLint 검사
 bun lint:fix      # ESLint 자동 수정
 ```
 
-## Deployment
-
-Vercel 배포 권장:
-
-1. GitHub 레포지토리 연결
-2. 환경 변수 설정
-3. 자동 배포
+---
 
 ## License
 
